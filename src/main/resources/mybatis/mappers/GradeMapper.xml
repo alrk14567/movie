@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nc13.mappers.GradeMapper">
+    <select id="selectAll" resultType="gradeDTO" parameterType="hashmap">
+        SELECT * FROM grade INNER JOIN user
+        ON grade.writer_id=user.id
+        WHERE grade.movie_id=#{movieId}
+    </select>
+
+    <insert id="insert" parameterType="gradeDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO grade(writer_id,movie_id,grade,review)
+        VALUES(#{writerId},#{movieId},#{grade},#{review})
+    </insert>
+
+    <update id="update" parameterType="gradeDTO">
+        UPDATE grade SET
+        grade=#{grade},
+        review=#{review},
+        modify_date=NOW(),
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM grade
+        WHERE id=#{id}
+    </delete>
+
+    <select id="gradeCheck" parameterType="hashmap" resultType="gradeDTO">
+        SELECT * FROM grade
+        WHERE writer_id=#{writerId}
+        AND movie_id=#{movieId}
+    </select>
+
+    <select id="gradeAll" resultType="double" parameterType="int">
+        SELECT SUM(grade)/COUNT(*) FROM grade
+        WHERE movie_id=#{movieId}
+    </select>
+
+    <select id="gradeRank2" resultType="double" parameterType="int">
+        SELECT SUM(grade.grade)/COUNT(*) FROM grade
+        INNER JOIN user
+        ON grade.writer_id=user.id
+        WHERE grade.movie_id=#{movieId}
+        AND (user.role='ADMIN' OR user.role='REVIEWER')
+    </select>
+
+    <select id="gradeRank3" resultType="double" parameterType="int">
+        SELECT SUM(grade.grade)/COUNT(*) FROM grade
+        INNER JOIN user
+        ON grade.writer_id=user.id
+        WHERE grade.movie_id=#{movieId}
+        AND user.role='USER'
+    </select>
+</mapper>

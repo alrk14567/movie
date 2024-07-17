@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nc13.mappers.TheaterMapper">
+    <select id="selectAll" resultType="theaterDTO" parameterType="hashmap">
+        SELECT * FROM theater
+        ORDER BY id DESC
+        LIMIT ${startRow},${size}
+    </select>
+
+    <select id="selectSearch" resultType="theaterDTO" parameterType="hashmap">
+        SELECT * FROM theater
+        WHERE theater_name LIKE CONCAT ('%',#{inputSearch},'%')
+        OR theater_location LIKE CONCAT ('%',#{inputSearch},'%')
+        ORDER BY id DESC
+        LIMIT ${startRow},${size}
+    </select>
+
+    <insert id="insert" parameterType="theaterDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO theater(theater_name,theater_location,theater_tel,file_name)
+        VALUES(#{theaterName},#{theaterLocation},#{theaterTel},#{fileName})
+    </insert>
+
+    <select id="selectOne" parameterType="int" resultType="theaterDTO">
+        SELECT * FROM theater
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectWrite" resultType="int">
+        SELECT id FROM theater
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <update id="update" parameterType="theaterDTO">
+        UPDATE theater
+        SET theater_name=#{theaterName},
+        theater_location=#{theaterLocation},
+        theater_tel=#{theaterTel},
+        modify_date=NOW()
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateFileName" parameterType="theaterDTO">
+        UPDATE theater
+        SET title=#{title},
+        story=#{story},
+        movie_grade=#{movieGrade},
+        modify_date=NOW(),
+        file_name=#{fileName},
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM theater
+        WHERE id=#{id}
+    </delete>
+
+    <select id="selectMaxRow" resultType="int">
+        SELECT COUNT(*) FROM theater
+    </select>
+
+    <select id="selectMaxRowSearch" resultType="int" parameterType="hashmap">
+        SELECT COUNT(*) FROM theater
+        WHERE theater_name LIKE CONCAT ('%',#{inputSearch},'%')
+        OR theater_location LIKE CONCAT ('%',#{inputSearch},'%')
+    </select>
+
+</mapper>
